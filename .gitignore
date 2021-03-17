@@ -6,3 +6,4 @@ scheme_code_backup.json
 stock_dir
 stockinfo_get.py
 url_parser.py
+*.xlsx
