@@ -7,7 +7,7 @@ import sys
 
 mf = Mftool()
 #debt_fund = mf.get_open_ended_debt_scheme_performance(as_json=False)
-file='/Users/vkamlesh/src/finpy/scheme_code.json'
+#file='/Users/vkamlesh/src/finpy/scheme_code.json'
 
 debt_fund_keys = ['Long Duration', 
           'Medium to Long Duration', 
@@ -34,11 +34,10 @@ solution_fund_keys = ["Children's","Retirement"]
 
 other_fund_keys = ["Index Funds/ETFs","FoFs(Oversease/Domestic)"]
 
-
 if os.path.isfile('scheme_code.json'):
     pass
 else:
-    scheme_code = mf.get_scheme_codes()
+    scheme_code = mf.get_scheme_codes(as_json=True)
     with open('scheme_code.json', 'w') as outfile:
         json.dump(scheme_code, outfile, indent=4)    
 
@@ -57,7 +56,7 @@ def main(choice):
         other_fund_direct_perf()
     else:
         print("Please select right choice\n")                    
-                       
+
 
 #Exception handling due to data unavailability at www.amfiindia.com.(https://www.amfiindia.com/research-information/other-data/mf-scheme-performance-details)
         
@@ -133,17 +132,32 @@ def other_fund_direct_perf():
     other_ld = mf.get_open_ended_other_scheme_performance()
     with pd.ExcelWriter('Other_Fund_Direct_Performance.xlsx') as writer: 
         for key in other_fund_keys:
-            try:            
+            try:
                 other_fund_list = pd.DataFrame.from_dict(other_ld[key])
-                other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
-                new_key = ''.join(s for s in key if s.isalnum) #Handle Error: Invalid Excel character '[]:*?/\' in sheetname
-                other_direct_perf.to_excel(writer,sheet_name=new_key)
+                if key == 'Index Funds/ETFs':
+                    ETF_list = list(filter(lambda x: 'ETF' in x, other_fund_list['scheme_name']))
+                    for ETF in ETF_list:
+                        ETF_DATA = pd.DataFrame.from_dict(other_fund_list[ETF])
+                    ETF_DATA.to_excel(writer,sheet_name='ETF')
+                    other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
+                    other_direct_perf.to_excel(writer,sheet_name='IndexFund')
+                else:
+                    other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
+                    new_key = ''.join(s for s in key if s.isalnum()) #Handle Error: Invalid Excel character '[]:*?/\' in sheetname
+                    other_direct_perf.to_excel(writer,sheet_name=new_key)
             except KeyError:
                 print("Data for {} is not available Today.".format(key))
                 pass
             except Exception as exc:
                 print("Unexpected error: {}".format(exc))     
             
+
+
+#def display_scheme_code(scheme_code):
+
+
+
+
 
 
 # def mf_return(file):
