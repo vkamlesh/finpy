@@ -1,6 +1,7 @@
 #!/usr/bin/env /Users/vkamlesh/.virtualenvs/finpy/bin/python
 import json
 import pandas as pd
+import numpy as np
 import os.path
 from mftool import Mftool
 import sys
@@ -130,14 +131,18 @@ def solution_fund_direct_perf():
 
 def other_fund_direct_perf():
     other_ld = mf.get_open_ended_other_scheme_performance()
+    #other_ld = {'Index Funds/ETFs': [{'scheme_name': 'Aditya Birla Sun Life Banking ETF', 'benchmark': 'NIFTY Bank Total Return Index', 'latest NAV- Regular': '348.3700', 'latest NAV- Direct': 'NA', '1-Year Return(%)- Regular': '70.77', '1-Year Return(%)- Direct': 'NA', '3-Year Return(%)- Regular': 'NA', '3-Year Return(%)- Direct': 'NA', '5-Year Return(%)- Regular': 'NA', '5-Year Return(%)- Direct': 'NA'}, {'scheme_name': 'Aditya Birla Sun Life Gold ETF', 'benchmark': 'Domestic Price of Gold', 'latest NAV- Regular': '4,502.1430', 'latest NAV- Direct': 'NA', '1-Year Return(%)- Regular': '2.86', '1-Year Return(%)- Direct': 'NA', '3-Year Return(%)- Regular': '15.89', '3-Year Return(%)- Direct': 'NA', '5-Year Return(%)- Regular': '9.27', '5-Year Return(%)- Direct': 'NA'}, {'scheme_name': 'Aditya Birla Sun Life Index Fund', 'benchmark': 'NIFTY 50 Total Return Index', 'latest NAV- Regular': '155.8305', 'latest NAV- Direct': '157.3793', '1-Year Return(%)- Regular': '59.65', '1-Year Return(%)- Direct': '60.03', '3-Year Return(%)- Regular': '13.93', '3-Year Return(%)- Direct': '14.17', '5-Year Return(%)- Regular': '14.14', '5-Year Return(%)- Direct': '14.40'}, {'scheme_name': 'Aditya Birla Sun Life Nifty ETF', 'benchmark': 'NIFTY 50 Total Return Index', 'latest NAV- Regular': '174.4779', 'latest NAV- Direct': 'NA', '1-Year Return(%)- Regular': '61.31', '1-Year Return(%)- Direct': 'NA', '3-Year Return(%)- Regular': '14.72', '3-Year Return(%)- Direct': 'NA', '5-Year Return(%)- Regular': '15.27', '5-Year Return(%)- Direct': 'NA'}]}  // FOR testing.
     with pd.ExcelWriter('Other_Fund_Direct_Performance.xlsx') as writer: 
         for key in other_fund_keys:
             try:
-                other_fund_list = pd.DataFrame.from_dict(other_ld[key])
                 if key == 'Index Funds/ETFs':
+                    other_fund_list = pd.DataFrame.from_dict(other_ld[key])
+                    #index_array = other_fund_list.to_numpy()
                     ETF_list = list(filter(lambda x: 'ETF' in x, other_fund_list['scheme_name']))
                     for ETF in ETF_list:
-                        ETF_DATA = pd.DataFrame.from_dict(other_fund_list[ETF])
+                         ETF_DATA = other_fund_list[['scheme_name','benchmark','latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular']]
+                        #ETF_DATA = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == ETF])
+                    print(ETF_DATA)  
                     ETF_DATA.to_excel(writer,sheet_name='ETF')
                     other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
                     other_direct_perf.to_excel(writer,sheet_name='IndexFund')
@@ -175,24 +180,7 @@ def other_fund_direct_perf():
 
 
 
-
-
-
 if __name__ == '__main__':
 
     choice = input("Select fund category from following list.\n1.Debt\n2.Equity\n3.Hybrid\n4.Solution-Oriented\n5.Index/ETF\n")
     main(choice)
-
-
-
-
-#Unused Code
-'''
-with open(scheme_code_file,'r') as jdata:
-        data = json.load(jdata)
-        #rev_dic = {i: j for j, i in data.items()}
-        for code, name in data.items():
-            print(mf.get_scheme_quote(code))
-                
-'''
-
