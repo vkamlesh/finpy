@@ -137,15 +137,39 @@ def other_fund_direct_perf():
             try:
                 other_fund_list = pd.DataFrame.from_dict(other_ld[key])
                 if key == 'Index Funds/ETFs':
+                    ETF_VALUE = []
+                    INDEX_VALUE = []
+                    #ETF_VALUE = pd.DataFrame(columns = ['scheme_name','benchmark','latest NAV- Regular','latest NAV- Direct','1-Year Return(%)- Regular','1-Year Return(%)- Direct','3-Year Return(%)- Regular','3-Year Return(%)- Direct','5-Year Return(%)- Regular','5-Year Return(%)- Direct'])
+                    #INDEX_VALUE = pd.DataFrame(columns = ['scheme_name','benchmark','latest NAV- Direct','1-Year Return(%)- Direct','3-Year Return(%)- Direct','5-Year Return(%)- Direct'])
                     #index_array = other_fund_list.to_numpy()
                     #ETF_list = list(filter(lambda x: 'ETF' in x, other_fund_list['scheme_name']))
                     # #for ETF in ETF_list:
                     #     ETF_DATA = other_fund_list[['scheme_name','benchmark','latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular']]
                     #     #ETF_DATA = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == ETF])
                     # print(ETF_DATA)  
-                    # ETF_DATA.to_excel(writer,sheet_name='ETF')
-                    other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
-                    other_direct_perf.to_excel(writer,sheet_name='IndexFund')
+                    # ETF_DATA.to_excel(writer,sheet_name='ETF') 
+                    for scheme in other_fund_list['scheme_name']:
+                        if "ETF" in scheme:
+                            etf = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == scheme])
+                            #t1 = etf.drop(columns=['latest NAV- Direct','1-Year Return(%)- Direct','3-Year Return(%)- Direct','5-Year Return(%)- Direct'],axis=1)
+                            ETF_VALUE.append(etf)
+                            #ETF_VALUE = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'].isin([scheme])])
+                        else:
+                            idx = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == scheme])
+                            #i1 = idx.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
+                            INDEX_VALUE.append(idx)
+                            #INDEX_VALUE = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'].isin([scheme])])
+                    #print(ETF_VALUE)
+                    #print(INDEX_VALUE)
+                    ETF_VALUE = pd.concat(ETF_VALUE)
+                    INDEX_VALUE = pd.concat(INDEX_VALUE)      
+                    ETF_DATA = ETF_VALUE.drop(columns=['latest NAV- Direct','1-Year Return(%)- Direct','3-Year Return(%)- Direct','5-Year Return(%)- Direct'],axis=1)    
+                    INDEX_DATA = INDEX_VALUE.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
+
+                    ETF_DATA.to_excel(writer,sheet_name='ETF')            
+                    INDEX_DATA.to_excel(writer,sheet_name='IndexFund')
+                    #ETF_VALUE.to_excel(writer,sheet_name='ETF')
+                    #INDEX_VALUE.to_excel(writer,sheet_name='IndexFund')
                 else:
                     other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
                     new_key = ''.join(s for s in key if s.isalnum()) #Handle Error: Invalid Excel character '[]:*?/\' in sheetname
