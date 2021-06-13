@@ -135,15 +135,15 @@ def other_fund_direct_perf():
     with pd.ExcelWriter('Other_Fund_Direct_Performance.xlsx') as writer: 
         for key in other_fund_keys:
             try:
+                other_fund_list = pd.DataFrame.from_dict(other_ld[key])
                 if key == 'Index Funds/ETFs':
-                    other_fund_list = pd.DataFrame.from_dict(other_ld[key])
                     #index_array = other_fund_list.to_numpy()
-                    ETF_list = list(filter(lambda x: 'ETF' in x, other_fund_list['scheme_name']))
-                    for ETF in ETF_list:
-                         ETF_DATA = other_fund_list[['scheme_name','benchmark','latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular']]
-                        #ETF_DATA = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == ETF])
-                    print(ETF_DATA)  
-                    ETF_DATA.to_excel(writer,sheet_name='ETF')
+                    #ETF_list = list(filter(lambda x: 'ETF' in x, other_fund_list['scheme_name']))
+                    # #for ETF in ETF_list:
+                    #     ETF_DATA = other_fund_list[['scheme_name','benchmark','latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular']]
+                    #     #ETF_DATA = pd.DataFrame(other_fund_list.loc[other_fund_list['scheme_name'] == ETF])
+                    # print(ETF_DATA)  
+                    # ETF_DATA.to_excel(writer,sheet_name='ETF')
                     other_direct_perf = other_fund_list.drop(columns=['latest NAV- Regular','1-Year Return(%)- Regular','3-Year Return(%)- Regular','5-Year Return(%)- Regular'],axis=1)
                     other_direct_perf.to_excel(writer,sheet_name='IndexFund')
                 else:
