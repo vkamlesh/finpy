@@ -3,7 +3,6 @@ import json
 import pandas as pd
 import numpy as np
 import os.path
-import sys
 from mftool import Mftool
 
 
@@ -42,23 +41,7 @@ else:
     scheme_code = mf.get_scheme_codes(as_json=True)
     with open('scheme_code.json', 'w') as outfile:
         json.dump(scheme_code, outfile, indent=4)    
-
-
-
-def main(choice):
-    if choice == "1":
-        debt_fund_direct_perf()
-    elif choice == "2":
-        equity_fund_direct_perf()
-    elif choice == "3":
-        hybrid_fund_direct_perf()
-    elif choice == "4":
-        solution_fund_direct_perf()
-    elif choice == "5":
-        other_fund_direct_perf()
-    else:
-        print("Please select right choice\n")                    
-
+                
 
 #Exception handling due to data unavailability at www.amfiindia.com.(https://www.amfiindia.com/research-information/other-data/mf-scheme-performance-details)
         
@@ -183,28 +166,13 @@ def other_fund_direct_perf():
             
 
 
-#def display_scheme_code(scheme_code):
-
-
-
-
-
-
-# def mf_return(file):
-#     mf_name = input("Mutual Fund Name:")
-#     nav_start_date = input("Investment Start Date in D-M-YYYY \n")
-#     nav_end_date = input("Investment End Date in D-M-YYYY \n")
-#     with open(file,'r') as jdata:
-#         data = json.load(jdata)
-#         for code,name in data.items():
-#             if mf_name == name:
-#                 value = mf.get_scheme_historical_nav_for_dates(code,nav_start_date,nav_end_date)
-#                 df = pd.DataFrame(value['data'])
-#                 df.to_csv('nav_perf.csv',index=False)
-
-
 
 
 if __name__ == '__main__':
-        choice = input("Select fund category from following list.\n1.Debt\n2.Equity\n3.Hybrid\n4.Solution-Oriented\n5.Index/ETF\n")
-        main(choice)
+    
+    debt_fund_direct_perf()
+    equity_fund_direct_perf()
+    hybrid_fund_direct_perf()
+    solution_fund_direct_perf()
+    other_fund_direct_perf()
+
