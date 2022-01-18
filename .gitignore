@@ -1,5 +1,4 @@
 /mftool
 /stock
 *.xlsx
-~/.vscode
-
+.vscode/
